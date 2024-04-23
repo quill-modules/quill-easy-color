@@ -10,13 +10,13 @@ export default class EasyColorPicker extends Picker {
         localStorageKey: 'used-color',
         closeAfterChange: true,
         customColorChangeDelay: 300,
+        maxHistoryColor: 10,
       },
       themeOptions
     );
     this.label.innerHTML = label;
     this.container.classList.add('ql-color-picker');
 
-    this.maxUseColor = 10;
     this.localColorUsedKey = `${this.select.className}-${this.themeOptions.localStorageKey}`;
     this.usedColorOptions = [];
     try {
@@ -78,9 +78,9 @@ export default class EasyColorPicker extends Picker {
       this.removeUsedColor(repeatColor);
     }
     this.usedColor.unshift(color);
-    const removeColors = this.usedColor.slice(this.maxUseColor);
+    const removeColors = this.usedColor.slice(this.themeOptions.maxHistoryColor);
     removeColors.map((color) => this.removeUsedColor(color));
-    this.usedColor = this.usedColor.slice(0, this.maxUseColor);
+    this.usedColor = this.usedColor.slice(0, this.themeOptions.maxHistoryColor);
     localStorage.setItem(this.localColorUsedKey, JSON.stringify(this.usedColor));
     this.createUsedColorItem(color);
   }
