@@ -1,5 +1,5 @@
 import Quill from 'quill';
-const SnowTheme = Quill.import('themes/snow');
+const BubbleTheme = Quill.import('themes/bubble');
 const IconPicker = Quill.import('ui/icon-picker');
 const Picker = Quill.import('ui/picker');
 
@@ -80,7 +80,7 @@ const COLORS = [
   'custom',
 ];
 
-export default class EasyColorTheme extends SnowTheme {
+export default class EasyColorBubbleTheme extends BubbleTheme {
   buildPickers(selects, icons) {
     this.pickers = Array.from(selects).map((select) => {
       if (select.classList.contains('ql-align')) {
@@ -96,7 +96,7 @@ export default class EasyColorTheme extends SnowTheme {
         if (select.querySelector('option') == null) {
           fillSelect(select, COLORS);
         }
-        return new EasyColorPicker(select, icons[format]);
+        return new EasyColorPicker(select, icons[format], this.options.themeOptions);
       }
       if (select.querySelector('option') == null) {
         if (select.classList.contains('ql-font')) {
