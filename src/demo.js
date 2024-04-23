@@ -1,7 +1,7 @@
 import Quill from 'quill';
-import EasyColorTheme from './index';
+import { EasyColorSnowTheme } from './index';
 
-Quill.register({ 'themes/easy-color-theme': EasyColorTheme }, true);
+Quill.register({ 'themes/easy-color-theme': EasyColorSnowTheme }, true);
 
 const quill = new Quill('#editor', {
   theme: 'easy-color-theme',
@@ -19,5 +19,10 @@ const quill = new Quill('#editor', {
       [{ font: [] }],
       [{ align: [] }],
     ],
+  },
+  themeOptions: {
+    localStorageKey: 'easy-color',
+    closeAfterChange: false,
+    customColorChangeDelay: 0,
   },
 });
