@@ -9,11 +9,18 @@
     "dev": "gulp dev"
   },
   "keywords": [
-    "quill"
+    "quill",
+    "color",
+    "picker"
   ],
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zzxming/quill-easy-color"
+  },
+  "license": "MIT",
   "author": "zzxming",
   "devDependencies": {
     "@babel/preset-env": "^7.24.4",
