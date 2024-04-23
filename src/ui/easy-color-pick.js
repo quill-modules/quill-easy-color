@@ -3,13 +3,21 @@ import { debounce } from '../utils';
 const Picker = Quill.import('ui/picker');
 
 export default class EasyColorPicker extends Picker {
-  constructor(select, label, defualtColor = null) {
+  constructor(select, label, themeOptions) {
     super(select);
+    this.themeOptions = Object.assign(
+      {
+        localStorageKey: 'used-color',
+        closeAfterChange: true,
+        customColorChangeDelay: 300,
+      },
+      themeOptions
+    );
     this.label.innerHTML = label;
     this.container.classList.add('ql-color-picker');
 
     this.maxUseColor = 10;
-    this.localColorUsedKey = this.select.className + '_used-color';
+    this.localColorUsedKey = `${this.select.className}-${this.themeOptions.localStorageKey}`;
     this.usedColorOptions = [];
     try {
       this.usedColor = JSON.parse(localStorage.getItem(this.localColorUsedKey));
@@ -39,7 +47,9 @@ export default class EasyColorPicker extends Picker {
   createUsedColorItem(color) {
     const option = this.createUsedColorOption(color);
     this.select.appendChild(option);
-    this.usedColorLabels.insertBefore(this.buildItem(option), this.usedColorLabels.firstChild);
+    const label = this.buildItem(option);
+    label.setAttribute('custom', '');
+    this.usedColorLabels.insertBefore(label, this.usedColorLabels.firstChild);
   }
 
   createUsedColorOption(color) {
@@ -55,7 +65,7 @@ export default class EasyColorPicker extends Picker {
 
   removeUsedColor(color) {
     const option = this.select.querySelector(`option[value='${color}'][custom]`);
-    const label = this.usedColorLabels.querySelector(`p[data-value='${color}']`);
+    const label = this.options.querySelector(`p[data-value='${color}'][custom]`);
     option && option.remove();
     label && label.remove();
   }
@@ -87,7 +97,7 @@ export default class EasyColorPicker extends Picker {
         'input',
         debounce(() => {
           this.selectColor(input.value);
-          this.selectItem(this.usedColorLabels.children[0], true);
+          this.selectItem(this.options.querySelector(`p[data-value='${input.value}']`), true);
         }, 300)
       );
       this.customColorInput = input;
@@ -141,7 +151,7 @@ export default class EasyColorPicker extends Picker {
 
     if (trigger) {
       this.select.dispatchEvent(new Event('change'));
-      // this.close();
+      this.themeOptions.closeAfterChange && this.close();
     }
 
     const colorLabel = this.label.querySelector('.ql-color-label');
