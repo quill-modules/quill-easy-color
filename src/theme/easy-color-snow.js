@@ -111,6 +111,7 @@ export default class EasyColorSnowTheme extends SnowTheme {
     });
     const update = () => {
       this.pickers.forEach((picker) => {
+        if (picker instanceof EasyColorPicker && this.options?.themeOptions?.keepChooseColor) return;
         picker.update();
       });
     };

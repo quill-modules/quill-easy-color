@@ -6,7 +6,47 @@
   }
 }
 .@{namespace}-toolbar {
+  &.@{namespace}-snow {
+    .@{namespace}-color-picker {
+      &.keep-color {
+        display: flex;
+        width: 50px;
+        &.@{namespace}-color,
+        &.@{namespace}-background {
+          padding-left: 4px;
+          padding-right: 4px;
+          .@{namespace}-picker-label {
+            width: 28px;
+            flex-shrink: 0;
+          }
+        }
+        .@{namespace}-picker-label {
+          border-right: none;
+        }
+      }
+    }
+
+    .@{namespace}-picker {
+      &.@{namespace}-expanded {
+        .@{namespace}-picker-expand {
+          border: 1px solid #ccc;
+          border-left: none;
+          color: #ccc;
+        }
+      }
+    }
+  }
   .@{namespace}-color-picker {
+    .@{namespace}-picker-expand {
+      display: inline-flex;
+      height: 100%;
+      width: 100%;
+      align-items: center;
+      cursor: pointer;
+      &:hover {
+        color: #06c;
+      }
+    }
     .@{namespace}-picker-options {
       width: 212px;
     }

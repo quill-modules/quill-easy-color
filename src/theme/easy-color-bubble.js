@@ -111,6 +111,7 @@ export default class EasyColorBubbleTheme extends BubbleTheme {
     });
     const update = () => {
       this.pickers.forEach((picker) => {
+        if (picker instanceof EasyColorPicker && this.options?.themeOptions?.keepChooseColor) return;
         picker.update();
       });
     };
