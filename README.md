@@ -57,6 +57,7 @@ const quillBubble = new Quill('#editor-snow', {
 | localStorageKey        | localStorage key prefix                   | string  | used-color |
 | closeAfterChange       | snow theme close panel after change color | boolean | true       |
 | customColorChangeDelay | custom color change debounce delay        | number  | 300        |
+| keepChooseColor        | keep choose color                         | boolean | true       |
 
 # Custom
 

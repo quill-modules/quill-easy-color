@@ -11,6 +11,8 @@ export default class EasyColorPicker extends Picker {
         closeAfterChange: true,
         customColorChangeDelay: 300,
         maxHistoryColor: 10,
+        expandIcon: `<svg viewBox="0 0 32 32"><path fill="currentColor" d="m24 12l-8 10l-8-10z"/></svg>`,
+        keepChooseColor: true,
       },
       themeOptions
     );
@@ -18,7 +20,6 @@ export default class EasyColorPicker extends Picker {
     this.container.classList.add('ql-color-picker');
 
     this.localColorUsedKey = `${this.select.className}-${this.themeOptions.localStorageKey}`;
-    this.usedColorOptions = [];
     try {
       this.usedColor = JSON.parse(localStorage.getItem(this.localColorUsedKey));
       if (!this.usedColor || !(this.usedColor instanceof Array)) {
@@ -29,6 +30,54 @@ export default class EasyColorPicker extends Picker {
       this.usedColor = [];
     }
     this.createUsedColor();
+
+    if (this.themeOptions.keepChooseColor) {
+      this.container.classList.add('keep-color');
+      this.bindLabelEvent();
+      this.expendIcon();
+    }
+    this.curColor = '';
+  }
+
+  bindLabelEvent() {
+    this.label.addEventListener('mousedown', (e) => {
+      this.close();
+      e.preventDefault();
+      this.selectItem(
+        Array.from(this.options.querySelectorAll('.ql-picker-item')).find(
+          (op) => (op.dataset.value ?? '') === this.curColor
+        ),
+        true
+      );
+    });
+  }
+
+  expendIcon() {
+    const span = document.createElement('span');
+    span.classList.add('ql-picker-expand');
+    this.themeOptions.expandIcon && (span.innerHTML = this.themeOptions.expandIcon);
+    this.label.parentNode.insertBefore(span, this.label.nextSibling);
+
+    span.addEventListener('mousedown', () => {
+      this.togglePicker();
+    });
+    this.labelIcon = span;
+  }
+
+  update() {
+    let option;
+    if (this.select.selectedIndex > -1) {
+      let item = this.container.querySelector('.ql-picker-options').children[this.select.selectedIndex];
+      option = this.select.options[this.select.selectedIndex];
+      this.selectItem(item);
+    } else {
+      this.selectItem(null);
+    }
+    let isActive = option != null && option !== this.select.querySelector('option[selected]');
+    this.label.classList.toggle('ql-active', isActive);
+    // 上面代码没有更改, 继承自 quill/ui/picker 主要是需要使用到 isActive
+    // 使展开 icon 与图标 icon 同背景和颜色
+    this.labelIcon && this.labelIcon.classList.toggle('ql-active', isActive);
   }
 
   createUsedColor() {
@@ -44,6 +93,7 @@ export default class EasyColorPicker extends Picker {
       this.createUsedColorItem(this.usedColor[i]);
     }
   }
+
   createUsedColorItem(color) {
     const option = this.createUsedColorOption(color);
     this.select.appendChild(option);
@@ -127,8 +177,20 @@ export default class EasyColorPicker extends Picker {
   }
 
   selectItem(item, trigger = false) {
+    const value = item ? item.getAttribute('data-value') || '' : '';
+    const colorLabel = this.label.querySelector('.ql-color-label');
+    if (colorLabel) {
+      if (colorLabel.tagName === 'line') {
+        colorLabel.style.stroke = value;
+      } else {
+        colorLabel.style.fill = value;
+      }
+    }
+
+    this.curColor = value;
+
     const selected = this.container.querySelector('.ql-selected');
-    if (item === selected) return;
+    // if (item === selected) return;
     if (selected != null) {
       selected.classList.remove('ql-selected');
     }
@@ -138,6 +200,7 @@ export default class EasyColorPicker extends Picker {
     this.select.selectedIndex = Array.from(this.select.children).findIndex(
       (option) => option.value === (item.dataset.value ?? '')
     );
+
     if (item.hasAttribute('data-value')) {
       this.label.setAttribute('data-value', item.getAttribute('data-value'));
     } else {
@@ -152,16 +215,6 @@ export default class EasyColorPicker extends Picker {
     if (trigger) {
       this.select.dispatchEvent(new Event('change'));
       this.themeOptions.closeAfterChange && this.close();
-    }
-
-    const colorLabel = this.label.querySelector('.ql-color-label');
-    const value = item ? item.getAttribute('data-value') || '' : '';
-    if (colorLabel) {
-      if (colorLabel.tagName === 'line') {
-        colorLabel.style.stroke = value;
-      } else {
-        colorLabel.style.fill = value;
-      }
     }
   }
 }

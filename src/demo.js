@@ -1,5 +1,6 @@
 import Quill from 'quill';
 import { EasyColorSnowTheme, EasyColorBubbleTheme } from './index';
+// const Parchment = Quill.import('parchment');
 
 Quill.register(
   {
@@ -40,7 +41,6 @@ const quillSnow = new Quill('#editor-snow', {
       [{ script: 'sub' }, { script: 'super' }],
       [{ indent: '-1' }, { indent: '+1' }],
       [{ direction: 'rtl' }],
-      [{ header: 1 }, { header: 2 }, { header: 3 }, { header: 4 }],
       [{ header: [1, 2, 3, 4, 5, 6, false] }],
       ['bold', 'italic', 'underline'],
       ['image', 'code-block'],
@@ -55,5 +55,6 @@ const quillSnow = new Quill('#editor-snow', {
     localStorageKey: 'easy-color',
     closeAfterChange: false,
     customColorChangeDelay: 300,
+    keepChooseColor: false,
   },
 });
