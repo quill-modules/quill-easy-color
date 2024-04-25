@@ -5,7 +5,7 @@ import { EasyColorSnowTheme, EasyColorBubbleTheme } from './index';
 Quill.register(
   {
     'themes/easy-color-snow-theme': EasyColorSnowTheme,
-    'themes/easy-color-bubble-theme': EasyColorBubbleTheme,
+    // 'themes/easy-color-bubble-theme': EasyColorBubbleTheme,
   },
   true
 );
@@ -55,6 +55,6 @@ const quillSnow = new Quill('#editor-snow', {
     localStorageKey: 'easy-color',
     closeAfterChange: false,
     customColorChangeDelay: 300,
-    keepChooseColor: false,
+    keepChooseColor: true,
   },
 });
