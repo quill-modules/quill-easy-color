@@ -10,7 +10,7 @@
     .@{namespace}-color-picker {
       &.keep-color {
         display: flex;
-        width: 50px;
+        width: 52px;
         &.@{namespace}-color,
         &.@{namespace}-background {
           padding-left: 4px;
@@ -21,7 +21,7 @@
           }
         }
         .@{namespace}-picker-label {
-          border-right: none;
+          border-right-color: transparent;
         }
       }
     }
@@ -29,8 +29,8 @@
     .@{namespace}-picker {
       &.@{namespace}-expanded {
         .@{namespace}-picker-expand {
-          border: 1px solid #ccc;
-          border-left: none;
+          border-color: #ccc;
+          border-left-color: transparent;
           color: #ccc;
         }
       }
@@ -43,6 +43,7 @@
       width: 100%;
       align-items: center;
       cursor: pointer;
+      border: 1px solid transparent;
       &:hover {
         color: #06c;
       }
