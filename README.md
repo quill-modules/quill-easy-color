@@ -14,7 +14,8 @@ npm install quill-easy-color
 
 ```javascript
 import Quill from 'quill';
-import { EasyColorSnowTheme, EasyColorBubbleTheme } from './index';
+import { EasyColorSnowTheme, EasyColorBubbleTheme } from 'quill-easy-color';
+import 'quill-easy-color/dist/index.css';
 
 // choose the theme you are using to register
 Quill.register(
