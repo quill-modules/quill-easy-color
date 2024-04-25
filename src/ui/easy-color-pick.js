@@ -177,8 +177,20 @@ export default class EasyColorPicker extends Picker {
   }
 
   selectItem(item, trigger = false) {
+    const value = item ? item.getAttribute('data-value') || '' : '';
+    const colorLabel = this.label.querySelector('.ql-color-label');
+    if (colorLabel) {
+      if (colorLabel.tagName === 'line') {
+        colorLabel.style.stroke = value;
+      } else {
+        colorLabel.style.fill = value;
+      }
+    }
+
+    this.curColor = value;
+
     const selected = this.container.querySelector('.ql-selected');
-    if (item === selected) return;
+    // if (item === selected) return;
     if (selected != null) {
       selected.classList.remove('ql-selected');
     }
@@ -204,17 +216,5 @@ export default class EasyColorPicker extends Picker {
       this.select.dispatchEvent(new Event('change'));
       this.themeOptions.closeAfterChange && this.close();
     }
-
-    const value = item ? item.getAttribute('data-value') || '' : '';
-    const colorLabel = this.label.querySelector('.ql-color-label');
-    if (colorLabel) {
-      if (colorLabel.tagName === 'line') {
-        colorLabel.style.stroke = value;
-      } else {
-        colorLabel.style.fill = value;
-      }
-    }
-
-    this.curColor = value;
   }
 }

@@ -2,15 +2,26 @@ import Quill from 'quill';
 const BubbleTheme = Quill.import('themes/bubble');
 const IconPicker = Quill.import('ui/icon-picker');
 const Picker = Quill.import('ui/picker');
-
 import EasyColorPicker from '../ui/easy-color-pick';
+import { BackgroundStyle } from '../formats/background';
+import { ColorStyle } from '../formats/color';
+
+Quill.register(
+  {
+    'attributors/style/color': ColorStyle,
+    'formats/color': ColorStyle,
+    'attributors/style/background': BackgroundStyle,
+    'formats/background': BackgroundStyle,
+  },
+  true
+);
 
 const ALIGNS = [false, 'center', 'right', 'justify'];
 const FONTS = [false, 'serif', 'monospace'];
 const HEADERS = ['1', '2', '3', false];
 const SIZES = ['small', false, 'large', 'huge'];
 const COLORS = [
-  false,
+  '',
   'rgb(255, 255, 255)',
   'rgb(0, 0, 0)',
   'rgb(72, 83, 104)',
@@ -77,7 +88,7 @@ const COLORS = [
   'rgb(102, 82, 0)',
   'rgb(59, 21, 81)',
 
-  'custom',
+  // 'custom',
 ];
 
 export default class EasyColorBubbleTheme extends BubbleTheme {
@@ -94,7 +105,7 @@ export default class EasyColorBubbleTheme extends BubbleTheme {
       if (select.classList.contains('ql-background') || select.classList.contains('ql-color')) {
         const format = select.classList.contains('ql-background') ? 'background' : 'color';
         if (select.querySelector('option') == null) {
-          fillSelect(select, COLORS);
+          fillColorSelect(select, COLORS);
         }
         return new EasyColorPicker(select, icons[format], this.options.themeOptions);
       }
@@ -126,6 +137,19 @@ function fillSelect(select, values, defaultValue = false) {
       option.setAttribute('selected', 'selected');
     } else {
       option.setAttribute('value', value);
+    }
+    select.appendChild(option);
+  });
+}
+function fillColorSelect(select, values, format, defaultValue) {
+  const colorGetter = document.createElement('span');
+  values.forEach((value) => {
+    const option = document.createElement('option');
+    if (value === defaultValue) {
+      option.setAttribute('selected', 'selected');
+    } else {
+      colorGetter.style[format] = value;
+      option.setAttribute('value', colorGetter.style[format]);
     }
     select.appendChild(option);
   });
