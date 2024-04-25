@@ -24,6 +24,8 @@
           closeAfterChange: true,
           customColorChangeDelay: 300,
           maxHistoryColor: 10,
+          expandIcon: `<svg viewBox="0 0 32 32"><path fill="currentColor" d="m24 12l-8 10l-8-10z"/></svg>`,
+          keepChooseColor: true,
         },
         themeOptions
       );
@@ -31,7 +33,6 @@
       this.container.classList.add('ql-color-picker');
 
       this.localColorUsedKey = `${this.select.className}-${this.themeOptions.localStorageKey}`;
-      this.usedColorOptions = [];
       try {
         this.usedColor = JSON.parse(localStorage.getItem(this.localColorUsedKey));
         if (!this.usedColor || !(this.usedColor instanceof Array)) {
@@ -42,6 +43,54 @@
         this.usedColor = [];
       }
       this.createUsedColor();
+
+      if (this.themeOptions.keepChooseColor) {
+        this.container.classList.add('keep-color');
+        this.bindLabelEvent();
+        this.expendIcon();
+      }
+      this.curColor = '';
+    }
+
+    bindLabelEvent() {
+      this.label.addEventListener('mousedown', (e) => {
+        this.close();
+        e.preventDefault();
+        this.selectItem(
+          Array.from(this.options.querySelectorAll('.ql-picker-item')).find(
+            (op) => (op.dataset.value ?? '') === this.curColor
+          ),
+          true
+        );
+      });
+    }
+
+    expendIcon() {
+      const span = document.createElement('span');
+      span.classList.add('ql-picker-expand');
+      this.themeOptions.expandIcon && (span.innerHTML = this.themeOptions.expandIcon);
+      this.label.parentNode.insertBefore(span, this.label.nextSibling);
+
+      span.addEventListener('mousedown', () => {
+        this.togglePicker();
+      });
+      this.labelIcon = span;
+    }
+
+    update() {
+      let option;
+      if (this.select.selectedIndex > -1) {
+        let item = this.container.querySelector('.ql-picker-options').children[this.select.selectedIndex];
+        option = this.select.options[this.select.selectedIndex];
+        this.selectItem(item);
+      } else {
+        this.selectItem(null);
+      }
+      let isActive = option != null && option !== this.select.querySelector('option[selected]');
+      this.label.classList.toggle('ql-active', isActive);
+      // 上面代码没有更改, 继承自 quill/ui/picker 主要是需要使用到 isActive
+      // 使展开 icon 与图标 icon 同背景和颜色
+      this.labelIcon && this.labelIcon.classList.toggle('ql-active', isActive);
     }
 
     createUsedColor() {
@@ -57,6 +106,7 @@
         this.createUsedColorItem(this.usedColor[i]);
       }
     }
+
     createUsedColorItem(color) {
       const option = this.createUsedColorOption(color);
       this.select.appendChild(option);
@@ -140,8 +190,20 @@
     }
 
     selectItem(item, trigger = false) {
+      const value = item ? item.getAttribute('data-value') || '' : '';
+      const colorLabel = this.label.querySelector('.ql-color-label');
+      if (colorLabel) {
+        if (colorLabel.tagName === 'line') {
+          colorLabel.style.stroke = value;
+        } else {
+          colorLabel.style.fill = value;
+        }
+      }
+
+      this.curColor = value;
+
       const selected = this.container.querySelector('.ql-selected');
-      if (item === selected) return;
+      // if (item === selected) return;
       if (selected != null) {
         selected.classList.remove('ql-selected');
       }
@@ -151,6 +213,7 @@
       this.select.selectedIndex = Array.from(this.select.children).findIndex(
         (option) => option.value === (item.dataset.value ?? '')
       );
+
       if (item.hasAttribute('data-value')) {
         this.label.setAttribute('data-value', item.getAttribute('data-value'));
       } else {
@@ -166,29 +229,43 @@
         this.select.dispatchEvent(new Event('change'));
         this.themeOptions.closeAfterChange && this.close();
       }
-
-      const colorLabel = this.label.querySelector('.ql-color-label');
-      const value = item ? item.getAttribute('data-value') || '' : '';
-      if (colorLabel) {
-        if (colorLabel.tagName === 'line') {
-          colorLabel.style.stroke = value;
-        } else {
-          colorLabel.style.fill = value;
-        }
-      }
     }
   }
+
+  const Parchment$1 = Quill.import('parchment');
+  // 兼容 quill1.3.7
+  const StyleAttr$1 = Parchment$1.StyleAttributor || Parchment$1.Attributor.Style;
+  const BackgroundStyle = new StyleAttr$1('background', 'background-color', {
+    scope: Parchment$1.Scope.INLINE,
+  });
+
+  const Parchment = Quill.import('parchment');
+  // 兼容 quill1.3.7
+  const StyleAttr = Parchment.StyleAttributor || Parchment.Attributor.Style;
+  const ColorStyle = new StyleAttr('color', 'color', {
+    scope: Parchment.Scope.INLINE,
+  });
 
   const SnowTheme = Quill.import('themes/snow');
   const IconPicker$1 = Quill.import('ui/icon-picker');
   const Picker$1 = Quill.import('ui/picker');
+
+  Quill.register(
+    {
+      'attributors/style/color': ColorStyle,
+      'formats/color': ColorStyle,
+      'attributors/style/background': BackgroundStyle,
+      'formats/background': BackgroundStyle,
+    },
+    true
+  );
 
   const ALIGNS$1 = [false, 'center', 'right', 'justify'];
   const FONTS$1 = [false, 'serif', 'monospace'];
   const HEADERS$1 = ['1', '2', '3', false];
   const SIZES$1 = ['small', false, 'large', 'huge'];
   const COLORS$1 = [
-    false,
+    '',
     'rgb(255, 255, 255)',
     'rgb(0, 0, 0)',
     'rgb(72, 83, 104)',
@@ -272,7 +349,7 @@
         if (select.classList.contains('ql-background') || select.classList.contains('ql-color')) {
           const format = select.classList.contains('ql-background') ? 'background' : 'color';
           if (select.querySelector('option') == null) {
-            fillSelect$1(select, COLORS$1);
+            fillColorSelect$1(select, COLORS$1);
           }
           return new EasyColorPicker(select, icons[format], this.options.themeOptions);
         }
@@ -289,6 +366,7 @@
       });
       const update = () => {
         this.pickers.forEach((picker) => {
+          if (picker instanceof EasyColorPicker && this.options?.themeOptions?.keepChooseColor) return;
           picker.update();
         });
       };
@@ -307,17 +385,40 @@
       select.appendChild(option);
     });
   }
+  function fillColorSelect$1(select, values, format, defaultValue) {
+    const colorGetter = document.createElement('span');
+    values.forEach((value) => {
+      const option = document.createElement('option');
+      if (value === defaultValue) {
+        option.setAttribute('selected', 'selected');
+      } else {
+        colorGetter.style[format] = value;
+        option.setAttribute('value', colorGetter.style[format]);
+      }
+      select.appendChild(option);
+    });
+  }
 
   const BubbleTheme = Quill.import('themes/bubble');
   const IconPicker = Quill.import('ui/icon-picker');
   const Picker = Quill.import('ui/picker');
+
+  Quill.register(
+    {
+      'attributors/style/color': ColorStyle,
+      'formats/color': ColorStyle,
+      'attributors/style/background': BackgroundStyle,
+      'formats/background': BackgroundStyle,
+    },
+    true
+  );
 
   const ALIGNS = [false, 'center', 'right', 'justify'];
   const FONTS = [false, 'serif', 'monospace'];
   const HEADERS = ['1', '2', '3', false];
   const SIZES = ['small', false, 'large', 'huge'];
   const COLORS = [
-    false,
+    '',
     'rgb(255, 255, 255)',
     'rgb(0, 0, 0)',
     'rgb(72, 83, 104)',
@@ -384,7 +485,7 @@
     'rgb(102, 82, 0)',
     'rgb(59, 21, 81)',
 
-    'custom',
+    // 'custom',
   ];
 
   class EasyColorBubbleTheme extends BubbleTheme {
@@ -401,7 +502,7 @@
         if (select.classList.contains('ql-background') || select.classList.contains('ql-color')) {
           const format = select.classList.contains('ql-background') ? 'background' : 'color';
           if (select.querySelector('option') == null) {
-            fillSelect(select, COLORS);
+            fillColorSelect(select, COLORS);
           }
           return new EasyColorPicker(select, icons[format], this.options.themeOptions);
         }
@@ -418,6 +519,7 @@
       });
       const update = () => {
         this.pickers.forEach((picker) => {
+          if (picker instanceof EasyColorPicker && this.options?.themeOptions?.keepChooseColor) return;
           picker.update();
         });
       };
@@ -436,6 +538,21 @@
       select.appendChild(option);
     });
   }
+  function fillColorSelect(select, values, format, defaultValue) {
+    const colorGetter = document.createElement('span');
+    values.forEach((value) => {
+      const option = document.createElement('option');
+      if (value === defaultValue) {
+        option.setAttribute('selected', 'selected');
+      } else {
+        colorGetter.style[format] = value;
+        option.setAttribute('value', colorGetter.style[format]);
+      }
+      select.appendChild(option);
+    });
+  }
+
+  // const Parchment = Quill.import('parchment');
 
   Quill.register(
     {
@@ -476,7 +593,6 @@
         [{ script: 'sub' }, { script: 'super' }],
         [{ indent: '-1' }, { indent: '+1' }],
         [{ direction: 'rtl' }],
-        [{ header: 1 }, { header: 2 }, { header: 3 }, { header: 4 }],
         [{ header: [1, 2, 3, 4, 5, 6, false] }],
         ['bold', 'italic', 'underline'],
         ['image', 'code-block'],
@@ -491,6 +607,7 @@
       localStorageKey: 'easy-color',
       closeAfterChange: false,
       customColorChangeDelay: 300,
+      keepChooseColor: false,
     },
   });
 
