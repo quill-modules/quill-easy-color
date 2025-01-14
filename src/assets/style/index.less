@@ -7,6 +7,42 @@
     background-color: rgba(56, 189, 248, 1);
   }
 }
+
+.@{namespace}-bubble .@{namespace}-toolbar,
+.@{namespace}-toolbar.@{namespace}-snow {
+  .@{namespace}-color-picker.@{namespace}-background,
+  .@{namespace}-color-picker.@{namespace}-color  {
+    .@{namespace}-picker-item {
+      display: inline-flex;
+      float: none;
+      border-color: rgba(120, 113, 108, 1);
+      background-color: var(--bg);
+      &.@{namespace}-selected {
+        &::before {
+          margin-left: 5px;
+          margin-top: 1px;
+          content: '';
+          display: block;
+          width: 3px;
+          height: 8px;
+          transform: rotate(45deg);
+          border-style: solid;
+          border-width: 0 2px 2px 0;
+          border-color: var(--bg);
+          filter: invert(1) contrast(100);
+        }
+      }
+      &.blank::before {
+        content: none;
+      }
+    }
+  }
+  .@{namespace}-picker.@{namespace}-expanded {
+    .@{namespace}-picker-options {
+      display: flex;
+    }
+  }
+}
 .@{namespace}-toolbar {
   .@{namespace}-color-picker {
     &.keep-color {
@@ -26,6 +62,7 @@
       }
     }
   }
+  
   &.@{namespace}-snow {
     .@{namespace}-color-picker {
       &.@{namespace}-expanded {
@@ -60,50 +97,46 @@
     }
     .@{namespace}-picker-options {
       width: 212px;
+      flex-wrap: wrap;
     }
     .@{namespace}-picker-item {
-      border-color: rgba(120, 113, 108, 1);
       &.blank {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
         width: 100%;
         height: 20px;
         margin: 4px 0px;
+        text-align: center;
         background-color: rgba(0, 0, 0, 0);
         &:hover {
           background-color: rgba(0, 0, 0, 0.05);
         }
-        &::before {
+        &::after {
           content: 'clear';
           font-size: 12px;
         }
       }
     }
-    .used {
-      width: 100%;
-      float: left;
-    }
+    
     .custom {
       position: relative;
       margin-top: 4px;
       width: 100%;
       height: 22px;
-      float: left;
       cursor: pointer;
       &:hover {
         background-color: rgba(0, 0, 0, 0.04);
       }
       &::before {
+        float: left;
         content: "More color";
-        position: absolute;
-        left: 4px;
         font-size: 14px;
         line-height: 22px;
-        z-index: -1;
       }
     }
     .used {
+      width: 100%;
       &-list {
         min-height: 20px;
       }

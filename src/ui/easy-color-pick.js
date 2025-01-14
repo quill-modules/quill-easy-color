@@ -138,7 +138,7 @@ export default class EasyColorPicker extends Picker {
   buildItem(option) {
     if (option.value === 'custom') {
       const onChange = debounce((color) => {
-        const {r,g,b,a} = HEXtoRGB(color)
+        const { r, g, b, a } = HEXtoRGB(color)
         const result = `rgba(${r}, ${g}, ${b}, ${a})`;
         this.selectColor(result);
         this.selectItem(this.options.querySelector(`p[data-value='${result}']`), true);
@@ -175,7 +175,7 @@ export default class EasyColorPicker extends Picker {
         this.selectItem(item, true);
       });
 
-      item.style.backgroundColor = option.getAttribute('value') || '';
+      item.style.setProperty('--bg', option.getAttribute('value') || '');
       return item;
     }
   }
