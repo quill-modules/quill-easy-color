@@ -74,17 +74,16 @@ const buildDemo = async () => {
   const bundle = await rollup({
     input: demoInput,
     treeshake: true,
+    external: [/^quill/],
     plugins: [commonjs()],
-    output: {
-      globals: {
-        quill: 'Quill',
-      },
-    },
   });
   return bundle.write({
     file: resolve(demoRoot, 'demo.js'),
     format: 'iife',
     sourcemap: true,
+    globals: {
+      quill: 'Quill',
+    },
   });
 };
 const build = parallel(buildTheme, series(buildModule, buildDemo));
