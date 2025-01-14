@@ -1,3 +1,5 @@
+@import './color-picker.less';
+
 @namespace: ql;
 
 .@{namespace}-editor {
@@ -70,17 +72,27 @@
         }
       }
     }
-    .used,
-    .custom {
+    .used {
       width: 100%;
       float: left;
     }
     .custom {
-      input {
-        width: 100%;
-        border: none;
-        outline: 0;
-        padding: 0;
+      position: relative;
+      margin-top: 4px;
+      width: 100%;
+      height: 22px;
+      float: left;
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+      }
+      &::before {
+        content: "More color";
+        position: absolute;
+        left: 4px;
+        font-size: 14px;
+        line-height: 22px;
+        z-index: -1;
       }
     }
     .used {

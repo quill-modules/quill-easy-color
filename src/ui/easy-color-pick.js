@@ -1,5 +1,5 @@
 import Quill from 'quill';
-import { debounce } from '../utils';
+import { createColorPicker, debounce } from '../utils';
 const Picker = Quill.import('ui/picker');
 
 export default class EasyColorPicker extends Picker {
@@ -137,21 +137,25 @@ export default class EasyColorPicker extends Picker {
 
   buildItem(option) {
     if (option.value === 'custom') {
-      const item = document.createElement('div');
-      const input = document.createElement('input');
-      item.classList.add('custom');
-      input.setAttribute('type', 'color');
-      item.appendChild(input);
-
-      input.addEventListener(
-        'input',
-        debounce(() => {
-          this.selectColor(input.value);
-          this.selectItem(this.options.querySelector(`p[data-value='${input.value}']`), true);
-        }, 300)
-      );
-      this.customColorInput = input;
-      return item;
+      const onChange = debounce((color) => {
+        this.selectColor(color);
+        this.selectItem(this.options.querySelector(`p[data-value='${color}']`), true);
+      }, 300)
+      const wrapper = document.createElement('div');
+      wrapper.classList.add('custom');
+      const colorPicker = createColorPicker({ onChange })
+      wrapper.addEventListener('click', (e) => {
+        e.stopPropagation();
+        console.log(wrapper.contains(colorPicker))
+        if (wrapper.contains(colorPicker)) return;
+        wrapper.appendChild(colorPicker);
+        colorPicker.addEventListener('click', (e) => e.stopPropagation());
+        document.addEventListener('click', () => {
+          console.log(colorPicker)
+          colorPicker.remove()
+        }, { once: true });
+      })
+      return wrapper
     } else {
       const item = document.createElement('p');
       item.tabIndex = '0';
