@@ -500,20 +500,20 @@
     buildItem(option) {
       if (option.value === 'custom') {
         const onChange = debounce((color) => {
-          this.selectColor(color);
-          this.selectItem(this.options.querySelector(`p[data-value='${color}']`), true);
+          const {r,g,b,a} = HEXtoRGB(color);
+          const result=  `rgba(${r},${g},${b},${a})`;
+          this.selectColor(result);
+          this.selectItem(this.options.querySelector(`p[data-value='${result}']`), true);
         }, 300);
         const wrapper = document.createElement('div');
         wrapper.classList.add('custom');
         const colorPicker = createColorPicker({ onChange });
         wrapper.addEventListener('click', (e) => {
           e.stopPropagation();
-          console.log(wrapper.contains(colorPicker));
           if (wrapper.contains(colorPicker)) return;
           wrapper.appendChild(colorPicker);
           colorPicker.addEventListener('click', (e) => e.stopPropagation());
           document.addEventListener('click', () => {
-            console.log(colorPicker);
             colorPicker.remove();
           }, { once: true });
         });
