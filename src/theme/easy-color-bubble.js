@@ -88,7 +88,7 @@ const COLORS = [
   'rgb(102, 82, 0)',
   'rgb(59, 21, 81)',
 
-  // 'custom',
+  'custom',
 ];
 
 export default class EasyColorBubbleTheme extends BubbleTheme {

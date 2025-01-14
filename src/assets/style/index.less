@@ -8,36 +8,44 @@
   }
 }
 .@{namespace}-toolbar {
-  &.@{namespace}-snow {
-    .@{namespace}-color-picker {
-      &.keep-color {
-        display: flex;
-        width: 52px;
-        &.@{namespace}-color,
-        &.@{namespace}-background {
-          padding-left: 4px;
-          padding-right: 4px;
-          .@{namespace}-picker-label {
-            width: 28px;
-            flex-shrink: 0;
-          }
-        }
+  .@{namespace}-color-picker {
+    &.keep-color {
+      display: flex;
+      width: 52px;
+      &.@{namespace}-color,
+      &.@{namespace}-background {
+        padding-left: 4px;
+        padding-right: 4px;
         .@{namespace}-picker-label {
-          border-right-color: transparent;
+          width: 28px;
+          flex-shrink: 0;
         }
       }
+      .@{namespace}-picker-label {
+        border-right-color: transparent;
+      }
     }
-
-    .@{namespace}-picker {
+  }
+  &.@{namespace}-snow {
+    .@{namespace}-color-picker {
       &.@{namespace}-expanded {
         .@{namespace}-picker-expand {
           border-color: #ccc;
           border-left-color: transparent;
           color: #ccc;
+          &:hover {
+            color: #ccc;
+          }
+        }
+      }
+      .@{namespace}-picker-expand {
+        &:hover {
+          color: #06c;
         }
       }
     }
   }
+
   .@{namespace}-color-picker {
     .@{namespace}-picker-expand {
       display: inline-flex;
@@ -47,7 +55,7 @@
       cursor: pointer;
       border: 1px solid transparent;
       &:hover {
-        color: #06c;
+        color: #fff;
       }
     }
     .@{namespace}-picker-options {
