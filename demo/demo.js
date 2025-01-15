@@ -365,6 +365,13 @@
   const Picker$2 = Quill.import('ui/picker');
 
   class EasyColorPicker extends Picker$2 {
+    static clearText = 'Remove color';
+    static customText = 'Color picker';
+    currentIndex = -1;
+
+    get statics() {
+      return this.constructor;
+    }
     constructor(select, label, themeOptions) {
       super(select);
       this.themeOptions = Object.assign(
@@ -428,9 +435,9 @@
 
     update() {
       let option;
-      if (this.select.selectedIndex > -1) {
-        let item = this.container.querySelector('.ql-picker-options').children[this.select.selectedIndex];
-        option = this.select.options[this.select.selectedIndex];
+      if (this.currentIndex > -1) {
+        let item = this.container.querySelectorAll('.ql-picker-item')[this.currentIndex];
+        option = this.select.options[this.currentIndex];
         this.selectItem(item);
       } else {
         this.selectItem(null);
@@ -461,7 +468,7 @@
       this.select.appendChild(option);
       const label = this.buildItem(option);
       label.setAttribute('custom', '');
-      this.usedColorLabels.insertBefore(label, this.usedColorLabels.firstChild);
+      this.usedColorLabels.appendChild(label);
     }
 
     createUsedColorOption(color) {
@@ -506,7 +513,10 @@
           this.selectItem(this.options.querySelector(`p[data-value='${result}']`), true);
         }, 300);
         const wrapper = document.createElement('div');
-        wrapper.classList.add('custom');
+        wrapper.classList.add('custom', 'ql-picker-item');
+        const text = document.createElement('span');
+        text.textContent = this.statics.customText;
+        wrapper.appendChild(text);
         const colorPicker = createColorPicker({ onChange });
         wrapper.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -525,6 +535,9 @@
         item.classList.add('ql-picker-item');
         if (!option.value) {
           item.classList.add('blank');
+          const text = document.createElement('span');
+          text.textContent = this.statics.clearText;
+          item.appendChild(text);
         }
         if (option.hasAttribute('value')) {
           item.setAttribute('data-value', option.getAttribute('value'));
@@ -556,7 +569,6 @@
       this.curColor = value;
 
       const selected = this.container.querySelector('.ql-selected');
-      // if (item === selected) return;
       if (selected != null) {
         selected.classList.remove('ql-selected');
       }
@@ -566,6 +578,7 @@
       this.select.selectedIndex = Array.from(this.select.children).findIndex(
         (option) => option.value === (item.dataset.value ?? '')
       );
+      this.currentIndex = this.select.selectedIndex;
 
       if (item.hasAttribute('data-value')) {
         this.label.setAttribute('data-value', item.getAttribute('data-value'));
