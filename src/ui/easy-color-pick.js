@@ -156,17 +156,17 @@ export default class EasyColorPicker extends Picker {
       const text = document.createElement('span');
       text.textContent = this.statics.customText;
       wrapper.appendChild(text);
-      const colorPicker = createColorPicker({ onChange })
+      this.customColorPicker = createColorPicker({ onChange })
       wrapper.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (wrapper.contains(colorPicker)) return;
-        wrapper.appendChild(colorPicker);
-        colorPicker.addEventListener('click', (e) => e.stopPropagation());
+        if (wrapper.contains(this.customColorPicker)) return;
+        wrapper.appendChild(this.customColorPicker);
+        this.customColorPicker.addEventListener('click', (e) => e.stopPropagation());
         document.addEventListener('click', () => {
-          colorPicker.remove()
+          this.customColorPicker.remove()
         }, { once: true });
       })
-      return wrapper
+      return wrapper;
     } else {
       const item = document.createElement('p');
       item.tabIndex = '0';
@@ -199,6 +199,11 @@ export default class EasyColorPicker extends Picker {
       item.style.setProperty('--bg', value);
       return item;
     }
+  }
+
+  close() {
+    super.close();
+    this.customColorPicker?.remove();
   }
 
   selectItem(item, trigger = false) {
