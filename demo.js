@@ -55,6 +55,6 @@ const quillSnow = new Quill('#editor-snow', {
     localStorageKey: 'easy-color',
     closeAfterChange: false,
     customColorChangeDelay: 300,
-    keepChooseColor: false,
+    keepChooseColor: true,
   },
 });
