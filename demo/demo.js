@@ -132,6 +132,32 @@
     return hex.join('');
   };
   const HSBtoHEX = (hsb) => RGBtoHEX(HSBtoRGB(hsb));
+  const RGBStringtoRGB = (colorString) => {
+    colorString = colorString.replace(/\s+/g, '');
+
+    const match = colorString.match(/rgba?\((\d+),(\d+),(\d+)(?:,([\d.]+))?\)/);
+    if (!match) {
+      console.warn(`Invalid color input`);
+      return { a: 1, r: 0, g: 0, b: 0 }
+    }
+
+    const r = parseInt(match[1], 10);
+    const g = parseInt(match[2], 10);
+    const b = parseInt(match[3], 10);
+    const a = match[4] ? parseFloat(match[4]) : 1;
+
+    return { a, r, g, b };
+  };
+  const isLightColor = (rgb) => {
+    const { r, g, b } = rgb;
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.5;
+  };
+  const colortoRGB = (color) => {
+    const span = document.createElement('span');
+    span.style.backgroundColor = color;
+    return RGBStringtoRGB(span.style.backgroundColor);
+  };
 
   const createColorPicker = (options = {}) => {
     const contentWidth = 230;
@@ -533,14 +559,21 @@
         item.tabIndex = '0';
         item.setAttribute('role', 'button');
         item.classList.add('ql-picker-item');
+
+        const value = option.getAttribute('value');
         if (!option.value) {
           item.classList.add('blank');
           const text = document.createElement('span');
           text.textContent = this.statics.clearText;
           item.appendChild(text);
+          // set dark if color is dark color scheme
+          if (!isLightColor(colortoRGB(value))) {
+            item.dataset.dark = 'true';
+          }
         }
+
         if (option.hasAttribute('value')) {
-          item.setAttribute('data-value', option.getAttribute('value'));
+          item.setAttribute('data-value', value);
         }
         if (option.textContent) {
           item.setAttribute('data-label', option.textContent);
@@ -550,7 +583,7 @@
           this.selectItem(item, true);
         });
 
-        item.style.setProperty('--bg', option.getAttribute('value') || '');
+        item.style.setProperty('--bg', value);
         return item;
       }
     }
