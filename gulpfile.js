@@ -3,9 +3,7 @@ import { fileURLToPath } from 'url';
 import gulp from 'gulp';
 import { rollup } from 'rollup';
 import commonjs from '@rollup/plugin-commonjs';
-import { getBabelOutputPlugin } from '@rollup/plugin-babel';
 import terser from '@rollup/plugin-terser';
-
 import less from 'gulp-less';
 import postcss from 'gulp-postcss';
 import autoprefixer from 'autoprefixer';
@@ -14,14 +12,13 @@ import cleanCSS from 'gulp-clean-css';
 import consola from 'consola';
 import rename from 'gulp-rename';
 
-const { src, watch, dest, series, parallel } = gulp;
+const { src, watch, dest, task, parallel, series } = gulp;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const distBundle = resolve(__dirname, './dist');
-const demoRoot = resolve(__dirname, './demo');
+const docsRoot = resolve(__dirname, './docs');
 const moduleRoot = resolve(__dirname, './src');
 const moduleInput = resolve(moduleRoot, 'index.js');
-const demoInput = resolve(moduleRoot, 'demo.js');
 const themeInput = resolve(moduleRoot, 'assets/style/index.less');
 
 const buildTheme = () => {
@@ -58,40 +55,37 @@ const buildModule = async () => {
     treeshake: true,
     plugins: [
       commonjs(),
-      getBabelOutputPlugin({
-        presets: ['@babel/preset-env'],
-      }),
       terser(),
     ],
   });
+  await Promise.all(
+    [resolve(distBundle, 'index.umd.js'), resolve(docsRoot, 'index.umd.js')].map(
+      file => bundle.write({
+        file,
+        format: 'umd',
+        sourcemap: true,
+        name: 'QuillEasyColor',
+        exports: 'named',
+        globals: {
+          quill: 'Quill',
+        },
+      })
+    )
+  )
   return bundle.write({
     file: resolve(distBundle, 'index.js'),
     format: 'es',
     sourcemap: true,
   });
 };
-const buildDemo = async () => {
-  const bundle = await rollup({
-    input: demoInput,
-    treeshake: true,
-    external: [/^quill/],
-    plugins: [commonjs()],
-  });
-  return bundle.write({
-    file: resolve(demoRoot, 'demo.js'),
-    format: 'iife',
-    sourcemap: true,
-    globals: {
-      quill: 'Quill',
-    },
-  });
-};
-const build = parallel(buildTheme, series(buildModule, buildDemo));
 
-export const module = buildModule;
-export const demo = buildDemo;
-export const dev = () => {
-  watch('./src/**/*.js', series(buildModule, buildDemo));
-  watch('./src/**/*.less', buildTheme);
+const copyTheme = () => src(resolve(distBundle, './*.css')).pipe(dest(docsRoot));
+const theme = series(buildTheme, copyTheme)
+const build = parallel(theme, buildModule);
+const dev = () => {
+  watch('./src/**/*.js', buildModule);
+  watch('./src/**/*.less', theme);
 };
-export default build;
+task('dev', dev);
+task('default', build);
+

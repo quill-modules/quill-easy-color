@@ -1,5 +1,5 @@
-import Quill from 'quill';
-import { EasyColorSnowTheme, EasyColorBubbleTheme } from './index';
+const Quill = window.Quill;
+const { EasyColorSnowTheme, EasyColorBubbleTheme } = window.QuillEasyColor;
 
 Quill.register(
   {
@@ -55,6 +55,6 @@ const quillSnow = new Quill('#editor-snow', {
     localStorageKey: 'easy-color',
     closeAfterChange: false,
     customColorChangeDelay: 300,
-    keepChooseColor: true,
+    keepChooseColor: false,
   },
 });
