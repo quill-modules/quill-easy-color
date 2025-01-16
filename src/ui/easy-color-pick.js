@@ -73,9 +73,10 @@ export default class EasyColorPicker extends Picker {
 
   update() {
     let option;
-    if (this.currentIndex > -1) {
-      let item = this.container.querySelectorAll('.ql-picker-item')[this.currentIndex];
-      option = this.select.options[this.currentIndex];
+    const index = this.themeOptions.keepChooseColor ? this.currentIndex : this.select.selectedIndex;
+    if (index > -1) {
+      let item = this.container.querySelectorAll('.ql-picker-item')[index];
+      option = this.select.options[index];
       this.selectItem(item);
     } else {
       this.selectItem(null);
