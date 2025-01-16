@@ -18,6 +18,10 @@
       background-color: var(--bg);
       font-size: 12px;
       &.@{namespace}-selected {
+        --border-color: #000000;
+        &[data-dark] {
+          --border-color: #ffffff;
+        }
         &::before {
           margin-left: 5px;
           margin-top: 1px;
@@ -28,8 +32,7 @@
           transform: rotate(45deg);
           border-style: solid;
           border-width: 0 2px 2px 0;
-          border-color: var(--bg);
-          filter: invert(1) contrast(100);
+          border-color: var(--border-color);
         }
       }
       &.blank {

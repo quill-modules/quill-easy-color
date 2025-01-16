@@ -96,6 +96,32 @@ export const RGBtoHEX = (rgb) => {
   return hex.join('');
 };
 export const HSBtoHEX = (hsb) => RGBtoHEX(HSBtoRGB(hsb));
+export const RGBStringtoRGB = (colorString) => {
+  colorString = colorString.replace(/\s+/g, '');
+
+  const match = colorString.match(/rgba?\((\d+),(\d+),(\d+)(?:,([\d.]+))?\)/);
+  if (!match) {
+    console.warn(`Invalid color input`);
+    return { a: 1, r: 0, g: 0, b: 0 }
+  }
+
+  const r = parseInt(match[1], 10);
+  const g = parseInt(match[2], 10);
+  const b = parseInt(match[3], 10);
+  const a = match[4] ? parseFloat(match[4]) : 1;
+
+  return { a, r, g, b };
+}
+export const isLightColor = (rgb) => {
+  const { r, g, b } = rgb;
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.5;
+};
+export const colortoRGB = (color) => {
+  const span = document.createElement('span');
+  span.style.backgroundColor = color;
+  return RGBStringtoRGB(span.style.backgroundColor);
+}
 
 export const createColorPicker = (options = {}) => {
   const contentWidth = 230;

@@ -1,5 +1,5 @@
 import Quill from 'quill';
-import { createColorPicker, debounce, HEXtoRGB } from '../utils';
+import { createColorPicker, debounce, HEXtoRGB, isLightColor, colortoRGB } from '../utils';
 const Picker = Quill.import('ui/picker');
 
 export default class EasyColorPicker extends Picker {
@@ -171,14 +171,21 @@ export default class EasyColorPicker extends Picker {
       item.tabIndex = '0';
       item.setAttribute('role', 'button');
       item.classList.add('ql-picker-item');
+
+      const value = option.getAttribute('value');
       if (!option.value) {
         item.classList.add('blank');
         const text = document.createElement('span');
         text.textContent = this.statics.clearText;
         item.appendChild(text);
+        // set dark if color is dark color scheme
+        if (!isLightColor(colortoRGB(value))) {
+          item.dataset.dark = 'true';
+        }
       }
+
       if (option.hasAttribute('value')) {
-        item.setAttribute('data-value', option.getAttribute('value'));
+        item.setAttribute('data-value', value);
       }
       if (option.textContent) {
         item.setAttribute('data-label', option.textContent);
@@ -188,7 +195,7 @@ export default class EasyColorPicker extends Picker {
         this.selectItem(item, true);
       });
 
-      item.style.setProperty('--bg', option.getAttribute('value') || '');
+      item.style.setProperty('--bg', value);
       return item;
     }
   }
