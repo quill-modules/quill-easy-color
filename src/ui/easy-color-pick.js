@@ -179,10 +179,6 @@ export default class EasyColorPicker extends Picker {
         const text = document.createElement('span');
         text.textContent = this.statics.clearText;
         item.appendChild(text);
-        // set dark if color is dark color scheme
-        if (!isLightColor(colortoRGB(value))) {
-          item.dataset.dark = 'true';
-        }
       }
 
       if (option.hasAttribute('value')) {
@@ -197,6 +193,10 @@ export default class EasyColorPicker extends Picker {
       });
 
       item.style.setProperty('--bg', value);
+      // set dark if color is dark color scheme
+      if (!isLightColor(colortoRGB(value))) {
+        item.dataset.dark = 'true';
+      }
       return item;
     }
   }
