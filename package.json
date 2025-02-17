@@ -20,7 +20,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zzxming/quill-easy-color"
+    "url": "git+https://github.com/quill-modules/quill-easy-color"
   },
   "license": "MIT",
   "author": "zzxming",

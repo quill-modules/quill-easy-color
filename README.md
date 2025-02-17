@@ -2,7 +2,7 @@
 
 A color picker module used in QuillJS
 
-[Demo](https://zzxming.github.io/quill-easy-color/index.html)
+[Demo](https://quill-modules.github.io/quill-easy-color/index.html)
 
 # Install
 
