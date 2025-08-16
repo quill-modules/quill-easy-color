@@ -101,7 +101,6 @@ export const RGBStringtoRGB = (colorString) => {
 
   const match = colorString.match(/rgba?\((\d+),(\d+),(\d+)(?:,([\d.]+))?\)/);
   if (!match) {
-    console.warn(`Invalid color input`);
     return { a: 1, r: 0, g: 0, b: 0 }
   }
 
